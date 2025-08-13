@@ -1,14 +1,13 @@
 // store/bearStore.ts
 import { create } from "zustand";
 interface BearState {
-  theme: "light" | "dark";
-  setTheme: () => void;
+  title: string;
+  setTitle: (title: string) => void;
 }
 
 const useTheme = create<BearState>()((set) => ({
-  theme: "dark",
-  setTheme: () =>
-    set((state) => ({ theme: state.theme === "dark" ? "light" : "dark" })),
+  title: "",
+  setTitle: (title: string) => set({ title: title }),
 }));
 
 export default useTheme;

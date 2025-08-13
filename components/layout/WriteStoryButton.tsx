@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const WriteStoryButton = () => {
   return (
-    <Link href={"/editor"}>
+    <Link href={"/create-story"}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button>

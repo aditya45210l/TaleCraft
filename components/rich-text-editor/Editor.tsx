@@ -2,21 +2,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 // import { createPost } from "@/lib/actions";
 
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { toast } from "sonner";
-import RichTextEditor from "../../../../components/rich-text-editor";
-import Container from "../../../../components/layout/Container";
-import UploadComp from "../../../../components/layout/UploadComp";
+import Container from "../layout/Container";
+import UploadComp from "../layout/UploadComp";
+import RichTextEditor from ".";
+import IpNftMintButton from "../IpNftMintButton";
+// import { toast } from "sonner";
 
-export default function CreatePage() {
-  const router = useRouter();
+export default function Editor({
+  storyId,
+  mode,
+  chapterId,
+}: {
+  storyId?: string;
+  mode: "story" | "chapter";
+  chapterId?: string;
+}) {
+  // const router = useRouter();
   const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const { userId, isLoaded, isSignedIn } = useAuth();
@@ -54,7 +64,7 @@ export default function CreatePage() {
     // }
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     console.log("Content changed:", content);
   }, [content]);
 
@@ -68,9 +78,10 @@ export default function CreatePage() {
               Back
             </Button>
           </Link>
-          <Button type="submit" disabled={isSubmitting}>
+          {/* <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "wait..." : "Publish"}
-          </Button>
+          </Button> */}
+          <IpNftMintButton data={{mode:mode}}/>
         </div>
         <h1 className="text-3xl font-bold">Create New Story</h1>
         <div>
