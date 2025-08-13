@@ -5,3 +5,5 @@ export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID;
 export const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 export const NEXT_PUBLIC_PINATA_JWT = process.env.NEXT_PUBLIC_PINATA_JWT;
 export const NEXT_PUBLIC_PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
+export const DB_URL = process.env.DB_URL;
+

@@ -10,15 +10,15 @@ interface metaDataType {
 }
 export const saveToDatabase = async (
   metaData: metaDataType,
-  result: string,
+  ipNftTokenId: string,
   walletAddress: string
 ) => {
   try {
-    const response = await fetch("/api/stories", {
+    const response = await fetch("/api/save-to-db", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        tokenId: result,
+        tokenId: ipNftTokenId,
         name: metaData.name,
         description: metaData.description,
         imageUrl: metaData.image,
@@ -32,8 +32,11 @@ export const saveToDatabase = async (
 
     if (response.ok) {
       console.log("Story saved to database");
+      return true;
     }
+
   } catch (error) {
     console.error("Failed to save to database:", error);
+    return false;
   }
 };

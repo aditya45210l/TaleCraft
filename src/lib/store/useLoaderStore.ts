@@ -5,8 +5,10 @@ import { create } from 'zustand';
 export const loadingStates = [
   { text: "Uploading story content to IPFS" },
   { text: "Uploading NFT metadata to IPFS" },
-  { text: "Waiting for User to conform transaction" },
-  { text: "Minting story NFT via Origin SDK" },
+  { text: "Signing the signature" },
+  { text: "Waiting for User to confirm transaction" },
+  { text: "Minting story NFT via Origin SDK Succesfully" },
+  { text: "Data saved in DB" },
 ];
 
 interface LoaderState {

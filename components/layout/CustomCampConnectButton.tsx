@@ -8,6 +8,15 @@ export function CustomCampConnectButton() {
   const { authenticated, loading } = useAuthState();
   const { isConnected, address } = useAccount();
 
+
+  const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
+
+if (!mounted) {
+  return null; // or loading skeleton
+}
+
+
   // Show a loading state while authentication status is being checked
   if (loading) {
     return (
@@ -64,7 +73,7 @@ export function CustomCampConnectButton() {
   );
 }
 
-import type { SVGProps } from "react";
+import { useEffect, useState, type SVGProps } from "react";
 import { FilePen } from "lucide-react";
 const MetaMask = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -157,7 +166,7 @@ const MetaMask = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-const Sign = (props: SVGProps<SVGSVGElement>) => (
+const Sign = () => (
   <svg
     className="w-8 h-8 text-white font-bold animate-spin"
     viewBox="0 0 24 24"

@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import RichTextEditor from ".";
 import { loadingStates, useLoaderStore } from "@/lib/store/useLoaderStore";
 
-import { MultiStepLoader as Loader, LoadingSpinner } from "../../src/components/ui/multi-step-loader";
+import { MultiStepLoader as Loader } from "../../src/components/ui/multi-step-loader";
 // ... (other imports)
 
 export default function Editor({ mode }: { mode: "story" | "chapter" }) {
@@ -43,8 +43,7 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
     type: mode === "story" ? "Story" : ("Chapter" as "Story" | "Chapter"),
     parentTokenId: mode === "chapter" ? parentTokenId : BigInt(0), // Only set parentTokenId for chapters
   };
-  console.log("Raw Story Data:", rawStoryData);
-  const { startLoading, loading, activeStep } = useLoaderStore();
+  const {loading, activeStep } = useLoaderStore();
   return (
     <Container>
       <div className="flex flex-col gap-6">

@@ -1,10 +1,11 @@
 import { useAuth } from "@campnetwork/origin/react";
 import type { Address } from "viem/accounts";
-import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 import { uploadToIPFS } from "@/lib/actions/UploadFile";
 import { HtmlUpload } from "@/lib/actions/htmlUpload";
 import { Button } from "@/components/ui/button";
 import { useLoaderStore } from "@/lib/store/useLoaderStore";
+import { saveToDatabase } from "@/lib/actions/SaveToDataBase";
 
 export interface StoryData_Interfase {
   name: string;
@@ -12,27 +13,49 @@ export interface StoryData_Interfase {
   imageFile: File | null;
   storyData: string;
   type: "Story" | "Chapter";
-  parentTokenId?: bigint | undefined; // `tokenId` of the parent story
+  parentTokenId?: bigint | undefined;
 }
 
-const IpNftMintButton = ({
-  rawStoryData,
-}: {
-  rawStoryData: StoryData_Interfase;
-}) => {
+export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryData_Interfase }) {
   const { origin, isAuthenticated, connect, walletAddress } = useAuth();
-    const { startLoading, advanceStep, stopLoading,loading } = useLoaderStore();
-  // New function to mint a story or chapter
+  const { startLoading, advanceStep, stopLoading } = useLoaderStore();
+
+  const checkAndReauthenticate = async () => {
+    // 1. Get the current JWT token
+    const jwtToken = await origin?.getJwt();
+
+    if (!jwtToken) {
+      // No JWT exists, user is not authenticated.
+      console.log("No JWT token found, attempting to connect.");
+      await connect();
+      // After connect, the hook states should be updated.
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(jwtToken);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedToken.exp! < currentTime) {
+        // JWT is expired, user needs to re-authenticate.
+        console.log("JWT has expired, re-authenticating...");
+        await connect();
+      } else {
+        // JWT is valid, continue.
+        console.log("JWT is still valid.");
+      }
+    } catch (error) {
+      console.error("Error decoding JWT, forcing re-authentication:", error);
+      await connect();
+    }
+  };
 
   const getStoryProtocolMetadata = async (storyData: StoryData_Interfase) => {
-    try {;
-      // 1. Start the loading process
+    try {
+      advanceStep();
       const contentIPFSUrl = await HtmlUpload(storyData.storyData);
       advanceStep();
-      // Handle image upload with an optional check
-      let imageIPFSUrl = "";
-
-      imageIPFSUrl = await uploadToIPFS(storyData.imageFile!);
+      const  imageIPFSUrl = await uploadToIPFS(storyData.imageFile!);
       advanceStep();
 
       const metadata = {
@@ -40,9 +63,10 @@ const IpNftMintButton = ({
         description: storyData.description,
         image: imageIPFSUrl,
         html_content: contentIPFSUrl,
+        type: storyData.type,
         attributes: [
           { trait_type: "Protocol", value: "COLABRATIVE_STORY_PROTOCOL" },
-          { trait_type: "ContentType", value: storyData.type }, // Dynamically set type
+          { trait_type: "ContentType", value: storyData.type },
           {
             trait_type: "ParentTokenId",
             value: storyData.parentTokenId?.toString() || "0",
@@ -51,20 +75,33 @@ const IpNftMintButton = ({
       };
       return metadata;
     } catch (error) {
-      toast.error("Error generating metadata: " + error);
+      console.error("Error uploading content or image:", error);
       stopLoading();
       return null;
     }
   };
+
   const mintStoryContent = async (storyData: StoryData_Interfase) => {
     try {
       startLoading();
-      console.log("loading; ",loading);
-      const metadata = await getStoryProtocolMetadata(storyData);
-      if (!metadata) {
+
+      // **Critical fix:** Ensure authentication first.
+      await checkAndReauthenticate();
+
+      // After re-authentication, check if the state is truly authenticated.
+      if (!isAuthenticated || !origin || !walletAddress) {
+        console.error("Authentication failed or user cancelled signing. Cannot proceed.");
+        stopLoading();
         return;
       }
-      // 5. Define license terms
+      
+      const metadata = await getStoryProtocolMetadata(storyData);
+      if (!metadata) {
+        console.log("Metadata is null, stopping minting process.");
+        stopLoading();
+        return;
+      }
+
       const license = {
         price: BigInt(0),
         duration: 2629800,
@@ -72,44 +109,37 @@ const IpNftMintButton = ({
         paymentToken: "0x0000000000000000000000000000000000000000" as Address,
       };
 
-      console.log("isAuth: ", isAuthenticated);
-      if (!isAuthenticated) {
-        console.log(isAuthenticated);
-        connect();
-        console.log(isAuthenticated);
-      }
-      // Check for both the SDK object and the wallet address
-      if (!origin || !walletAddress) {
-        toast.error("Wallet not connected.", {
-          description: "Please connect your wallet to publish content.",
-        });
-        return; // Stop the function from proceeding
-      }
-
       console.log("Minting story content with metadata:", metadata);
-      console.log("Parent Token ID:", storyData.parentTokenId);
-      console.log("Image File:", storyData.imageFile);
-      console.log("Story Data:", storyData.storyData);
-      await connect();
+      advanceStep();
+      
+      // Use origin?.mintFile to ensure it only runs if origin is available
       const result = await origin?.mintFile(
         storyData.imageFile!,
         metadata,
         license,
         storyData.parentTokenId
       );
+      
       advanceStep();
-      console.log("Minting result:", result);
-      if (result) {
-        toast.success("Content published successfully!");}
-        advanceStep();
+
+      if (!result) {
+        console.error("Minting failed or returned no result.");
+        stopLoading();
+        return;
+      }
+      
+      await saveToDatabase(metadata, result, walletAddress as string);
+      
+      advanceStep();
+      console.log("Minting completed successfully:", result);
       stopLoading();
-      // Return the result for further processing if needed
-      return result;
+
     } catch (error) {
+      console.error("Error on minting:", error);
       stopLoading();
-      console.log("Error on minting:", error);
     }
   };
+
   return (
     <div>
       <Button
@@ -128,5 +158,4 @@ const IpNftMintButton = ({
       </Button>
     </div>
   );
-};
-export default IpNftMintButton;
+}
