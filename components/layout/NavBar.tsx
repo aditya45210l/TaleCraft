@@ -142,10 +142,10 @@ export default function NavBar() {
   );
 }
 
-function MenuIcon(props) {
+function MenuIcon({className}:{className?: string}) {
   return (
     <svg
-      {...props}
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -163,10 +163,10 @@ function MenuIcon(props) {
   );
 }
 
-function MoonIcon(props) {
+function MoonIcon({className}:{className?: string}) {
   return (
     <svg
-      {...props}
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
