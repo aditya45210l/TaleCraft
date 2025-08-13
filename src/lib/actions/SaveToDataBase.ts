@@ -1,59 +1,39 @@
-import { StoryData_Interfase } from "../../../components/layout/IpNftMintButton";
-
 // Add this to your IpNftMintButton component
-const saveToDatabase = async (storyData:StoryData_Interfase, result:string) => {
+
+interface metaDataType {
+  name: string;
+  description: string;
+  image: string;
+  html_content: string;
+  type: "Story" | "Chapter";
+  parentTokenId?: string;
+}
+export const saveToDatabase = async (
+  metaData: metaDataType,
+  result: string,
+  walletAddress: string
+) => {
   try {
-    const response = await fetch('/api/stories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/stories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        tokenId: result.tokenId?.toString() || result.toString(),
-        name: storyData.name,
-        description: storyData.description,
-        imageUrl: metadata.image,
-        htmlContentUrl: metadata.html_content,
-        type: storyData.type,
-        parentTokenId: storyData.parentTokenId?.toString() || '0',
+        tokenId: result,
+        name: metaData.name,
+        description: metaData.description,
+        imageUrl: metaData.image,
+        htmlContentUrl: metaData.html_content,
+        type: metaData.type,
+        parentTokenId: metaData.parentTokenId?.toString() || "0",
         author: walletAddress,
-        txHash: result.txHash || result
-      })
+        // txHash: result.txHash || result
+      }),
     });
-    
+
     if (response.ok) {
-      console.log('Story saved to database');
+      console.log("Story saved to database");
     }
   } catch (error) {
-    console.error('Failed to save to database:', error);
-  }
-};
-
-// Modify your mintStoryContent function
-const mintStoryContent = async (storyData: StoryData_Interfase) => {
-  try {
-    startLoading();
-    const metadata = await getStoryProtocolMetadata(storyData);
-    if (!metadata) return;
-
-    // ... existing minting code ...
-
-    const result = await origin?.mintFile(
-      storyData.imageFile!,
-      metadata,
-      license,
-      storyData.parentTokenId
-    );
-    
-    if (result) {
-      // Save to database immediately after minting
-      await saveToDatabase(storyData, result);
-      toast.success("Content published successfully!");
-    }
-    
-    advanceStep();
-    stopLoading();
-    return result;
-  } catch (error) {
-    stopLoading();
-    console.log("Error on minting:", error);
+    console.error("Failed to save to database:", error);
   }
 };

@@ -12,7 +12,7 @@ const StorySchema = new mongoose.Schema({
   author: { type: String, required: true },
   protocol: { type: String, default: 'COLABRATIVE_STORY_PROTOCOL' },
   createdAt: { type: Date, default: Date.now },
-  txHash: { type: String }
+//   txHash: { type: String }
 });
 
 export default mongoose.models.Story || mongoose.model('Story', StorySchema);
