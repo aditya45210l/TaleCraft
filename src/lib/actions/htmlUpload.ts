@@ -1,23 +1,27 @@
+// A new version of your HTML upload function
 import { uploadToIPFS } from "./UploadFile";
 
-export const HtmlUpload = async (htmlContent:string, fileName = 'story.html') => {
+export const HtmlUpload = async (htmlContent: string) => {
   try {
-    // 1. Convert the HTML string into a Blob.
-    // The 'text/html' type tells the browser how to interpret the data.
-    const contentBlob = new Blob([htmlContent], { type: 'text/html' });
+    // 1. Create a JSON object to hold your HTML string
+    const contentObject = {
+      contentType: "text/html",
+      data: htmlContent
+    };
 
-    // 2. Create a File object from the Blob.
-    const contentFile = new File([contentBlob], fileName, {
-      type: 'text/html',
-    });
+    // // 2. Convert the JavaScript object to a JSON string
+    // const contentJSON = JSON.stringify(contentObject);
+    
+    // // 3. Create a Blob and File object with a .json extension
+    // const contentBlob = new Blob([contentJSON], { type: 'application/json' });
+    // const contentFile = new File([contentBlob], 'story-content.json', { type: 'application/json' });
 
-    // 3. Upload the File object to IPFS.
-
-    const  url = await uploadToIPFS(contentFile);
-    // 4. The result contains the CID of the uploaded file.
+    // 4. Upload the new .json file to IPFS
+    const url = await uploadToIPFS(contentObject);
+    
     return url;
   } catch (error) {
-    console.error("Error uploading HTML content to IPFS:", error);
-    throw new Error("Failed to save HTML content to IPFS.");
+    console.error("Error uploading content to IPFS:", error);
+    throw new Error("Failed to save content to IPFS.");
   }
 };

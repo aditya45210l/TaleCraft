@@ -1,110 +1,94 @@
+// components/Editor.tsx
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { createPost } from "@/lib/actions";
-
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useStoryStore } from "@/lib/store/useStoryData";
 import Container from "../layout/Container";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import IpNftMintButton from "../layout/IpNftMintButton";
 import UploadComp from "../layout/UploadComp";
+import { Input } from "@/components/ui/input";
 import RichTextEditor from ".";
-import IpNftMintButton from "../IpNftMintButton";
-// import { toast } from "sonner";
+import { loadingStates, useLoaderStore } from "@/lib/store/useLoaderStore";
 
-export default function Editor({
-  storyId,
-  mode,
-  chapterId,
-}: {
-  storyId?: string;
-  mode: "story" | "chapter";
-  chapterId?: string;
-}) {
-  // const router = useRouter();
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [content, setContent] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  // const { userId, isLoaded, isSignedIn } = useAuth();
+import { MultiStepLoader as Loader, LoadingSpinner } from "../../src/components/ui/multi-step-loader";
+// ... (other imports)
 
-  // useEffect(() => {
-  //   if (isLoaded && !isSignedIn) {
-  //     router.push("/");
-  //   }
-  // }, [isLoaded, isSignedIn, router]);
+export default function Editor({ mode }: { mode: "story" | "chapter" }) {
+  // Get setter functions from the store
+  const {
+    setTitle,
+    setDescription,
+    setStoryData,
+    name:title,
+    description,
+    imageFile,
+    storyData,
+    parentTokenId,
+  } = useStoryStore();
 
-  // if (!isLoaded) {
-  //   return <div>Loading...</div>;
-  // }
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // try {
-    //   if (!userId) {
-    //     throw new Error("User is not authenticated");
-    //   }
-
-    //   const result = await createPost({ title, content });
-    //   if (result.success) {
-    //     toast("Post created successfully");
-    //     router.push("/");
-    //   } else {
-    //     toast("Failed to create post");
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to create post:", error);
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
   };
 
-  useEffect(() => {
-    console.log("Content changed:", content);
-  }, [content]);
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
+  };
 
+  const rawStoryData = {
+    name: title,
+    description: description,
+    imageFile: imageFile,
+    storyData: storyData,
+    type: mode === "story" ? "Story" : ("Chapter" as "Story" | "Chapter"),
+    parentTokenId: mode === "chapter" ? parentTokenId : BigInt(0), // Only set parentTokenId for chapters
+  };
+  console.log("Raw Story Data:", rawStoryData);
+  const { startLoading, loading, activeStep } = useLoaderStore();
   return (
     <Container>
       <div className="flex flex-col gap-6">
-        <div className=" flex flex-row justify-between">
+        <div className="flex flex-row justify-between">
           <Link href={`/`}>
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
           </Link>
-          {/* <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "wait..." : "Publish"}
-          </Button> */}
-          <IpNftMintButton data={{mode:mode}}/>
+          {/* The button is now independent and doesn't need props */}
+          <IpNftMintButton rawStoryData={rawStoryData} />
         </div>
-        <h1 className="text-3xl font-bold">Create New Story</h1>
+        <h1 className="text-3xl font-bold">
+          Create New {mode === "story" ? "Story" : "Chapter"}
+        </h1>
         <div>
+          {/* UploadComp updates the store directly */}
           <UploadComp />
         </div>
-        <form className="max-w-4xl flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            {/* <Label className="pt-6" htmlFor="title">Title</Label> */}
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title"
-              className=""
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <RichTextEditor content={content} onChange={setContent} />
-          </div>
+        <form className="max-w-4xl flex flex-col gap-4">
+          <Input
+            id="title"
+            onChange={handleTitleChange}
+            placeholder="Title"
+            required
+          />
+          <Input
+            id="description"
+            onChange={handleDescriptionChange}
+            placeholder="Description"
+            required
+          />
+          {/* RichTextEditor also updates the store directly */}
+          <RichTextEditor onChange={setStoryData} content={storyData} />
         </form>
       </div>
+      {useLoaderStore.getState().loading && (
+        <Loader
+          loadingStates={loadingStates}
+          loading={loading}
+          value={activeStep}
+        />
+      )}
     </Container>
   );
 }

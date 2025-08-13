@@ -1,28 +1,61 @@
+// pages/api/upload.ts
 "server only"
-import { NEXT_PUBLIC_PINATA_GATEWAY, NEXT_PUBLIC_PINATA_JWT } from "@/lib/config/env";
 import { NextResponse, type NextRequest } from "next/server";
-import { PinataSDK } from "pinata"
+import { PinataSDK } from "pinata";
+import { NEXT_PUBLIC_PINATA_JWT } from "@/lib/config/env";
 
 const pinata = new PinataSDK({
-  pinataJwt: NEXT_PUBLIC_PINATA_JWT,
-  pinataGateway:NEXT_PUBLIC_PINATA_GATEWAY
-})
+    pinataJwt: NEXT_PUBLIC_PINATA_JWT,
+});
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI0ZjIzODQ5Zi00Y2FlLTQyZDEtYWFjNy1iYzhmMTgyYzJkNjUiLCJlbWFpbCI6ImFrMDI5NTY3NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJGUkExIn0seyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMDY5YTM2ZGQ1YmFiNzg0M2E1OTMiLCJzY29wZWRLZXlTZWNyZXQiOiIzMWRjOGNmN2U3Yzk2N2VhYWJiNGFkYWI0ZDMzNzk2YzU2MTExYWZlMWNhNzk3MTZmNGNmYzYzN2JhNTkwYjk2IiwiZXhwIjoxNzg2NDY2MDI3fQ.78cAo7doZ9_YZ5ihgMEc2ZCK8jTuY7GlztGItOPKveQ
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
-    const { cid } = await pinata.upload.public.file(file);
-    // const url = await pinata.gateways.public.convert(cid);
+    try {
+        const contentType = request.headers.get("Content-Type");
 
-    console.log("cid: ",cid);
-    return NextResponse.json({ status: 200, cid: cid });
-  } catch (e) {
-    console.log(e);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+        // Case 1: The request body is pure JSON
+        if (contentType?.includes("application/json")) {
+            const jsonPayload = await request.json();
+            if (!jsonPayload) {
+                return NextResponse.json({ error: "Empty JSON payload." }, { status: 400 });
+            }
+            // Use the dedicated Pinata method for JSON uploads
+            const { cid } = await pinata.upload.public.json(jsonPayload);
+            return NextResponse.json({ status: 200, cid });
+        }
+
+        // Case 2: The request is a file upload via FormData
+        if (contentType?.includes("multipart/form-data")) {
+            const formData = await request.formData();
+            const file: File | null = formData.get("file") as unknown as File;
+            
+            if (!file) {
+                return NextResponse.json({ error: "No file found in request." }, { status: 400 });
+            }
+
+            // Check the file's MIME type to be sure
+            if (file.type.startsWith("image/")) {
+                // Use the standard Pinata method for file uploads
+                const { cid } = await pinata.upload.public.file(file);
+                return NextResponse.json({ status: 200, cid });
+            } else if (file.type === "application/json") {
+                // If a JSON file is uploaded via FormData, handle it here
+                const fileText = await file.text();
+                const jsonPayload = JSON.parse(fileText);
+                const { cid } = await pinata.upload.public.json(jsonPayload);
+                return NextResponse.json({ status: 200, cid });
+            } else {
+                return NextResponse.json({ error: `Unsupported file type: ${file.type}` }, { status: 400 });
+            }
+        }
+        
+        // Handle other unsupported content types
+        return NextResponse.json({ error: "Unsupported Content-Type" }, { status: 400 });
+
+    } catch (e) {
+        console.error("Upload error:", e);
+        return NextResponse.json(
+            { error: "An unexpected error occurred during the upload." },
+            { status: 500 }
+        );
+    }
 }

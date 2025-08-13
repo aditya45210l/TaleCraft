@@ -1,16 +1,23 @@
-'use client';
-import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/kibo-ui/dropzone';
-import { useState } from 'react';
+"use client";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/ui/kibo-ui/dropzone";
+import { useStoryStore } from "@/lib/store/useStoryData";
+import { useState } from "react";
 const UploadComp = () => {
+  const { setImageFile } = useStoryStore();
   const [files, setFiles] = useState<File[] | undefined>();
   const [filePreview, setFilePreview] = useState<string | undefined>();
   const handleDrop = (files: File[]) => {
     console.log(files);
     setFiles(files);
+    setImageFile(files[0]);
     if (files.length > 0) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        if (typeof e.target?.result === 'string') {
+        if (typeof e.target?.result === "string") {
           setFilePreview(e.target?.result);
         }
       };
@@ -19,16 +26,15 @@ const UploadComp = () => {
   };
   return (
     <Dropzone
-      accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+      accept={{ "image/*": [".png", ".jpg", ".jpeg"] }}
       onDrop={handleDrop}
       onError={console.error}
       src={files}
       maxSize={1024 * 1024 * 5} // 5MB
       maxFiles={1}
-
     >
       <DropzoneEmptyState />
-      <DropzoneContent >
+      <DropzoneContent>
         {filePreview && (
           <div className="h-[102px] w-full">
             <img
