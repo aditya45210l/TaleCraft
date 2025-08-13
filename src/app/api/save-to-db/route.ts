@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // 5. Return an error response
     console.error("Failed to save story:", error);
     return NextResponse.json(
-      { message: "Failed to save story", error: error.message },
+      { message: "Failed to save story", error: error },
       { status: 500 }
     );
   }
