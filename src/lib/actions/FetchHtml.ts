@@ -1,27 +1,29 @@
-// FetchHtml.ts (Client-side)
-import DOMPurify from 'dompurify';
+// lib/actions/FetchHtml.ts
 
-export const fetchAndSanitizeHtml = async (cid: string) => {
-  if (!cid) {
+// This function fetches JSON data from an IPFS CID using a public gateway
+export const fetchContentFromIpfs = async (gatewayUrl: string): Promise<string> => {
+  if (!gatewayUrl) {
     return '';
   }
 
+  // Use a reliable public IPFS gateway
+
+
   try {
-    // Call your new server-side API route with the CID
-    const response = await fetch(`/api/fetch-ipfs?cid=${cid}`);
+    const response = await fetch(gatewayUrl,{
+      mode:'cors'
+    });
     
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error);
+      throw new Error(`Failed to fetch content from IPFS: ${response.statusText}`);
     }
 
-    const jsonResponse = await response.json();
-    const rawHtml = jsonResponse.data;
-    const sanitizedHtml = DOMPurify.sanitize(rawHtml);
+    const data = await response.json();
     
-    return sanitizedHtml;
-  } catch (err) {
-    console.error("Error fetching story:", err);
-    throw new Error("Could not load story content.");
+    // Corrected: Read from the 'data' key instead of 'html_content'
+    return data.data || '';
+  } catch (error) {
+    console.error(`Error fetching IPFS content for CID ${gatewayUrl}:`, error);
+    return '';
   }
 };

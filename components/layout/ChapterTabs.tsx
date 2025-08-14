@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,66 +17,141 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { StoryDataType } from "../pages/ShowStories";
+import { StoryDataType } from "@/app/(root)/story/[storyId]/page";
+import { fetchContentFromIpfs } from "@/lib/actions/FetchHtml";
+import { LoadingSpinner } from "@/components/ui/multi-step-loader";
 
+interface ChapterType {
+  name: string;
+  tokenId: string;
+  storyId: string;
+  chapterNumber: number;
+  htmlContentUrl: string;
+  description: string;
+}
 
+interface FullStoryType {
+  tokenId: string;
+  name: string;
+  description: string;
+  htmlContentUrl: string;
+}
 
+export function TabsDemo({
+  storyId,
+  data,
+}: {
+  storyId: string;
+  data: StoryDataType;
+}) {
+  const [activeTabContent, setActiveTabContent] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [contentCache, setContentCache] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState("");
 
-export async function TabsDemo({ tokenId, data }: { tokenId: string,data:StoryDataType}) {
+  const fullContent = useMemo(() => {
+    if (!data || !data.story) return [];
+    const storyAsChapter: FullStoryType = {
+      tokenId: data.story.tokenId,
+      name: data.story.name,
+      description: data.story.description,
+      htmlContentUrl: data.story.htmlContentUrl,
+    };
+    return [storyAsChapter, ...(data.chapters || [])];
+  }, [data]);
 
+  const hasContent = fullContent.length > 0;
 
-  if (!data) {
+  // This single useEffect now handles both initial load and tab changes.
+  useEffect(() => {
+    const fetchContent = async () => {
+      if (!hasContent) return;
+
+      const currentActiveTab = activeTab || fullContent[0].tokenId;
+      setActiveTab(currentActiveTab);
+
+      // Check cache first
+      if (contentCache[currentActiveTab]) {
+        setActiveTabContent(contentCache[currentActiveTab]);
+        setIsLoading(false);
+      } else {
+        // Fetch if not in cache
+        setIsLoading(true);
+        const selectedItem = fullContent.find(
+          (item) => item.tokenId === currentActiveTab
+        );
+        if (selectedItem) {
+          const html = await fetchContentFromIpfs(selectedItem.htmlContentUrl);
+          setActiveTabContent(html);
+          console.log(html);
+          setContentCache((prev) => ({
+            ...prev,
+            [selectedItem.tokenId]: html,
+          }));
+        }
+        setIsLoading(false);
+      }
+    };
+    fetchContent();
+  }, [activeTab, hasContent, fullContent]); // This hook runs when activeTab or the initial data changes.
+
+  const handleTabChange = (value: string) => {
+    // This is the only place we change the `activeTab` state.
+    // The useEffect above will handle the fetching in response to this change.
+    setActiveTab(value);
+  };
+
+  if (!data || !data.story) {
     return <div>Story not found.</div>;
   }
 
-  const hasChapters = data.chapters && data.chapters.length > 0;
+  const currentTabItem = fullContent.find((item) => item.tokenId === activeTab);
 
-  if (hasChapters) {
-    return (
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <Tabs defaultValue={data.chapters[0].tokenId}>
+  return (
+    <div className="flex min-w-full max-w-sm flex-col gap-6">
+      <Tabs
+        defaultValue={fullContent[0].tokenId}
+        onValueChange={handleTabChange}
+      >
+        <div className="flex justify-between">
           <TabsList>
             <TooltipProvider>
-              {data.chapters.map((chapter, index) => (
-                <Tooltip key={chapter.tokenId}>
+              {fullContent.map((item, index) => (
+                <Tooltip key={item.tokenId}>
                   <TooltipTrigger asChild>
-                    <TabsTrigger value={chapter.tokenId}>{`chapter${index + 1}`}</TabsTrigger>
+                    <TabsTrigger value={item.tokenId}>{`Chapter ${
+                      index + 1
+                    }`}</TabsTrigger>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{chapter.name}</p>
+                    <p>{item.name}</p>
                   </TooltipContent>
                 </Tooltip>
               ))}
             </TooltipProvider>
           </TabsList>
-          {data.chapters.map((chapter) => (
-            <TabsContent value={chapter.tokenId} key={chapter.tokenId}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{chapter.name}</CardTitle>
-                  <CardDescription>
-                    Content for chapter {chapter.name}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6">
-                  {/* Your chapter content here */}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
-    );
-  } else {
-    // Show the "Add Chapter" button when there are no chapters
-    return (
-
-<div className="flex justify-end">
-            <Link href={`/story/${tokenId}/create-chapter`} >
-            <Button>Add Chapter</Button>
-          </Link>
-</div>
-
-    );
-  }
+          <div className="items-end  ml-12">
+            <Link href={`/story/${storyId}/create-chapter`}>
+              <Button>Add Chapter</Button>
+            </Link>
+          </div>
+        </div>
+        <TabsContent value={activeTab}>
+          <Card className="min-w-full">
+            <CardHeader>
+              <CardTitle>{currentTabItem?.name}</CardTitle>
+              <CardDescription>{currentTabItem?.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              {isLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <div dangerouslySetInnerHTML={{ __html: activeTabContent }} />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }

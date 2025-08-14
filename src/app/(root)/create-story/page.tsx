@@ -3,7 +3,7 @@ import Editor from "../../../../components/rich-text-editor/Editor";
 const Page = () => {
 
   return (
-    <Editor mode="story" parentId="0"/>
+    <Editor mode="story"/>
   )
 }
 export default Page

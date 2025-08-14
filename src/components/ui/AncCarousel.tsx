@@ -7,7 +7,7 @@ interface SlideData {
   title: string;
   button: string;
   src: string;
-  tokenId: string;
+  storyId: string;
 }
 
 interface SlideProps {
@@ -64,7 +64,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
     event.currentTarget.style.opacity = "1";
   };
 
-  const { src, button, title, tokenId } = slide;
+  const { src, button, title, storyId } = slide;
 
   return (
     <div className="[perspective:1200px] [transform-style:preserve-3d]">
@@ -117,7 +117,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
             {title}
           </h2>
           <div className="flex justify-center">
-            <Link href={`/story/${tokenId}`}>
+            <Link prefetch={false} href={`/story/${storyId}`}>
               <button className="mt-6  px-4 py-2 w-fit mx-auto sm:text-sm bg-primary h-12 border border-transparent text-xs flex justify-center items-center rounded-2xl hover:shadow-lg transition duration-200 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] cursor-pointer">
                 {button}
               </button>

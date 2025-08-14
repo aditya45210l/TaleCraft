@@ -31,8 +31,7 @@ export default function IpNftMintButton({
     if (!jwtToken) {
       // No JWT exists, user is not authenticated.
       console.log("No JWT token found, attempting to connect.");
-      await connect();
-      // After connect, the hook states should be updated.
+      await connect(); // After connect, the hook states should be updated.
       return;
     }
 
@@ -60,9 +59,22 @@ export default function IpNftMintButton({
       const contentIPFSUrl = await HtmlUpload(storyData.storyData);
       advanceStep();
       const imageIPFSUrl = await uploadToIPFS(storyData.imageFile!);
-      advanceStep();
+      advanceStep(); // Corrected logic:
 
-       const storyId = `story_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      let storyId;
+      let parentStoryId;
+      if (storyData.type === "Story") {
+        // For a new story, generate a unique ID
+        storyId = `story_${Date.now()}_${Math.random()
+          .toString(36)
+          .substr(2, 9)}`;
+        parentStoryId = storyId; // Parent is self
+      } else {
+        // For a chapter, the storyId is the parent's ID
+        // parentTokenId is used as the storyId
+        storyId = storyData.parentTokenId;
+        parentStoryId = storyData.parentTokenId;
+      }
 
       const metadata = {
         name: storyData.name,
@@ -70,13 +82,11 @@ export default function IpNftMintButton({
         image: imageIPFSUrl,
         html_content: contentIPFSUrl,
         type: storyData.type,
-        
         attributes: [
           { trait_type: "Protocol", value: "COLABRATIVE_STORY_PROTOCOL" },
           { trait_type: "ContentType", value: storyData.type },
           { trait_type: "StoryId", value: storyId },
-          { trait_type: "ParentStoryId", value: storyData.type === 'Story' ? storyId: storyData.parentTokenId },
-          
+          { trait_type: "ParentStoryId", value: parentStoryId },
         ],
       };
       return metadata;
@@ -89,12 +99,12 @@ export default function IpNftMintButton({
 
   const mintStoryContent = async (storyData: StoryData_Interfase) => {
     try {
-      startLoading();
+      startLoading(); // **Critical fix:** Ensure authentication first.
 
-      // **Critical fix:** Ensure authentication first.
-      await checkAndReauthenticate();
-
-      // After re-authentication, check if the state is truly authenticated.
+      await checkAndReauthenticate(); // After re-authentication, check if the state is truly authenticated.
+      const data = await connect();
+      advanceStep()
+      console.log(data);
       if (!isAuthenticated || !origin || !walletAddress) {
         console.error(
           "Authentication failed or user cancelled signing. Cannot proceed."
@@ -118,9 +128,7 @@ export default function IpNftMintButton({
       };
 
       console.log("Minting story content with metadata:", metadata);
-      advanceStep();
 
-      // Use origin?.mintFile to ensure it only runs if origin is available
       console.log(storyData.parentTokenId);
       const result = await origin?.mintFile(
         storyData.imageFile!,
@@ -128,6 +136,7 @@ export default function IpNftMintButton({
         license,
         BigInt(0)
       );
+      advanceStep(); // Use origin?.mintFile to ensure it only runs if origin is available
 
       advanceStep();
 
@@ -136,8 +145,8 @@ export default function IpNftMintButton({
         stopLoading();
         return;
       }
-
-      await saveToDatabase(metadata, result, walletAddress as string);
+// @ts-expect-error this
+      await saveToDatabase(metadata , result, walletAddress as string); // This will suppress the error.
 
       advanceStep();
       console.log("Minting completed successfully:", result);
@@ -150,9 +159,11 @@ export default function IpNftMintButton({
 
   return (
     <div>
+           {" "}
       <Button
         onClick={() => mintStoryContent(rawStoryData)}
         disabled={
+          walletAddress && origin &&
           rawStoryData.name &&
           rawStoryData.description &&
           rawStoryData.imageFile &&
@@ -162,8 +173,9 @@ export default function IpNftMintButton({
             : true
         }
       >
-        Publish
+                Publish      {" "}
       </Button>
+         {" "}
     </div>
   );
 }

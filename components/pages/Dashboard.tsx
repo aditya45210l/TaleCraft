@@ -24,8 +24,8 @@ const Dashboard = () => {
         <CarouselDemo />
       </section>
       <section className="flex flex-col gap-4">
-        <TitleText text={"Top Stories"} />
-        <ShowStories />
+        <TitleText text={"Top Stories"}/>
+        <ShowStories  />
       </section>
     </div>
   );

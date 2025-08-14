@@ -11,7 +11,11 @@ import {
   StoryOverlay,
   StoryVideo,
 } from "@/components/ui/kibo-ui/stories";
-const stories = [
+import { StoryDataType } from "@/app/(root)/story/[storyId]/page";
+import { useRootStories } from "@/hooks/useFetchStories";
+import Link from "next/link";
+
+const imagesArray = [
   {
     id: 1,
     author: "Alex Johnson",
@@ -58,35 +62,54 @@ const stories = [
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   },
 ];
-const ShowStories = () => (
-  <Stories>
-    <StoriesContent>
-      {stories.map((story,i) => (
-                <motion.span
-                    key={story.id}
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.05, ease: "easeOut" }}
-                    className="mr-3"
-                >
-                    <div key={story.id}>
-          <Story className="aspect-[3/4] w-[200px]" >
-          <StoryVideo src={story.video} />
-          <StoryOverlay />
-          <StoryAuthor>
-            <StoryAuthorImage
-              fallback={story.fallback}
-              name={story.author}
-              src={story.avatar}
-            />
-            <StoryAuthorName>{story.author}</StoryAuthorName>
-          </StoryAuthor>
-        </Story>
-</div>
-                </motion.span>
-      ))}
-    </StoriesContent>
-  </Stories>
-);
+
+// Use .map() to create a new array with only the video and fallback properties
+const ShowStories = () => {
+  const { data } = useRootStories();
+  console.log(data);
+  const stories = data;
+
+  function getRandomSvg() {
+    const randomIndex = Math.floor(Math.random() * imagesArray.length);
+    return imagesArray[randomIndex].video;
+  }
+
+  return (
+    <Stories>
+      <StoriesContent>
+        {stories?.map((story, i) => (
+          <Link prefetch={false} href={`/story/${story.storyId}`} key={story.createdAt}>
+            <motion.span
+              key={story.createdAt}
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: i * 0.05, ease: "easeOut" }}
+              className="mr-3"
+            >
+              <div key={story.createdAt}>
+                <Story className="aspect-[3/4] w-[200px]">
+                  <StoryVideo src={getRandomSvg()} />
+                  <StoryOverlay />
+                  <StoryAuthor>
+                    <StoryAuthorImage
+                      fallback={imagesArray[0].fallback}
+                      name={story.author}
+                      src={
+                        imagesArray[
+                          Math.floor(Math.random() * imagesArray.length)
+                        ].avatar
+                      }
+                    />
+                    <StoryAuthorName>{story.author}</StoryAuthorName>
+                  </StoryAuthor>
+                </Story>
+              </div>
+            </motion.span>
+          </Link>
+        ))}
+      </StoriesContent>
+    </Stories>
+  );
+};
 
 export default ShowStories;

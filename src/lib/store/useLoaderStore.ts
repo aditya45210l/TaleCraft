@@ -3,9 +3,9 @@ import { create } from 'zustand';
 
 // Define the steps for the loader UI
 export const loadingStates = [
+  { text: "Signing the signature" },
   { text: "Uploading story content to IPFS" },
   { text: "Uploading NFT metadata to IPFS" },
-  { text: "Signing the signature" },
   { text: "Waiting for User to confirm transaction" },
   { text: "Minting story NFT via Origin SDK Succesfully" },
   { text: "Data saved in DB" },

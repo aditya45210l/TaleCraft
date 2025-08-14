@@ -13,6 +13,9 @@ import { loadingStates, useLoaderStore } from "@/lib/store/useLoaderStore";
 import { MultiStepLoader as Loader } from "../../src/components/ui/multi-step-loader";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@campnetwork/origin/react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CustomCampConnectButton } from "../layout/CustomCampConnectButton";
 
 // Define a type for the params object for better type safety
 type EditorParams = {
@@ -27,9 +30,6 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
   const params = useParams<EditorParams>();
   const { storyId } = params;
 
-  // Use useEffect to handle the side effect of getting the param
-  // and update the state when 'storyId' becomes available.
-  // The dependency array is crucial here.
   useEffect(() => {
     console.log("params inside useEffect:", params);
     if (storyId) {
@@ -67,8 +67,27 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
     type: mode === "story" ? "Story" : ("Chapter" as "Story" | "Chapter"),
     parentTokenId: String(parentTokenId), // This will be an empty string initially, then the correct ID
   };
-
+  const { origin, isAuthenticated, walletAddress } = useAuth();
   const { loading, activeStep } = useLoaderStore();
+
+  if(!origin && !isAuthenticated && !walletAddress){
+    return <div className="flex items-center justify-center min-h-[50vh]">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Authentication Required</CardTitle>
+            <CardDescription>
+              To create a new story or chapter, you must first connect your wallet.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            <p className="mb-4 text-sm text-gray-500">
+              Please click the button below to log in.
+            </p>
+            <CustomCampConnectButton/>
+          </CardContent>
+        </Card>
+      </div>
+  }
 
   return (
     <Container>
