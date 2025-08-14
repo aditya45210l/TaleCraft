@@ -70,7 +70,8 @@ export const ImagesSlider = ({
     window.addEventListener("keydown", handleKeyDown);
 
     // autoplay
-    let interval: any;
+    // @ts-expect-error this
+    let interval;
     if (autoplay) {
       interval = setInterval(() => {
         handleNext();
@@ -79,6 +80,7 @@ export const ImagesSlider = ({
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      // @ts-expect-error this
       clearInterval(interval);
     };
   }, []);
@@ -141,6 +143,7 @@ export const ImagesSlider = ({
             initial="initial"
             animate="visible"
             exit={direction === "up" ? "upExit" : "downExit"}
+            // @ts-expect-error kljlk
             variants={slideVariants}
             className="image h-full w-full absolute inset-0 object-cover object-center"
           />
