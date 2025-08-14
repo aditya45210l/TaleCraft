@@ -1,35 +1,4 @@
-// export const fetchAllStories = async () => {
-//   try {
-//     console.log("Fetching stories from API...");
-//     const response = await fetch('http://localhost:3000/api/stories/get-all',{
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//     });
 
-//     const data = await response.json();
-//     console.log("Response Data:", data);
-//     return data.success ? data.data : [];
-//   } catch (error) {
-//     console.error('Error fetching stories:', error);
-//     return [];
-//   }
-// };
-// export const fetchStoryById = async (tokenId:string) => {
-//   try {
-//     const response = await fetch(`http://localhost:3000/api/stories/${tokenId}`);
-//     const data = await response.json();
-//     return data ? data : {};
-//   } catch (error) {
-//     console.error('Error fetching story:', error);
-//     return null;
-//   }
-// };
-
-// lib/FetchActions/FetchAllStories.ts
-
-// Define the type for a Story object to ensure type safety
 interface Story {
   tokenId: string;
   name: string;
@@ -50,7 +19,7 @@ export const fetchAllStories = async (): Promise<Story[]> => {
     console.log("Fetching stories from API...");
     // Use the single API route with a query parameter to filter for 'Story' types
     const response = await fetch(
-      "http://localhost:3000/api/stories?type=Story",
+      "https://tale-craft-rust.vercel.app/api/stories?type=Story",
       {
         method: "GET",
         headers: {
@@ -81,7 +50,7 @@ export const fetchStoryById = async (storyId: string) => {
   try {
     // The storyId parameter should now be used in the URL
     const response = await fetch(
-      `http://localhost:3000/api/stories?storyId=${storyId}`
+      `https://tale-craft-rust.vercel.app/api/stories?storyId=${storyId}`
     );
 
     if (!response.ok) {
