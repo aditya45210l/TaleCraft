@@ -31,7 +31,7 @@ export function Provider({ children }: { children: ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <CampProvider clientId={'fce77d7a-8085-47ca-adff-306a933e76aa'}>
+          <CampProvider clientId={'9123887d-94f0-4427-a2f7-cd04d16c1fc3'}>
             {/* <ApolloProvider client={apollo}> */}
             {children}
             {/* </ApolloProvider> */}

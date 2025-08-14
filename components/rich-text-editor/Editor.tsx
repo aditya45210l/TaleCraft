@@ -1,6 +1,6 @@
 // components/Editor.tsx
 "use client";
-import { useStoryStore } from "@/lib/store/useStoryData";
+import { useEditorDataStore } from "@/lib/store/useEditonData";
 import Container from "../layout/Container";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,22 +10,45 @@ import UploadComp from "../layout/UploadComp";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from ".";
 import { loadingStates, useLoaderStore } from "@/lib/store/useLoaderStore";
-
 import { MultiStepLoader as Loader } from "../../src/components/ui/multi-step-loader";
-// ... (other imports)
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Define a type for the params object for better type safety
+type EditorParams = {
+  storyId?: string | string[]; // useParams can return a string or an array of strings
+};
 
 export default function Editor({ mode }: { mode: "story" | "chapter" }) {
-  // Get setter functions from the store
+  // Initialize the state with a default value.
+  const [parentTokenId, setParentTokenId] = useState('');
+
+  // Use the type-safe useParams hook
+  const params = useParams<EditorParams>();
+  const { storyId } = params;
+
+  // Use useEffect to handle the side effect of getting the param
+  // and update the state when 'storyId' becomes available.
+  // The dependency array is crucial here.
+  useEffect(() => {
+    console.log("params inside useEffect:", params);
+    if (storyId) {
+      // Check if storyId is an array and get the first element, otherwise use the string.
+      const id = Array.isArray(storyId) ? storyId[0] : storyId;
+      setParentTokenId(id);
+      console.log("tokenid: ipbutton: ", id);
+    }
+  }, [storyId, params]); // Add storyId and params to the dependency array
+
   const {
     setTitle,
     setDescription,
     setStoryData,
-    name:title,
+    name: title,
     description,
     imageFile,
     storyData,
-    parentTokenId,
-  } = useStoryStore();
+  } = useEditorDataStore();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -35,18 +58,21 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
     setDescription(e.target.value);
   };
 
+  // Use the state variable parentTokenId in rawStoryData
   const rawStoryData = {
     name: title,
     description: description,
     imageFile: imageFile,
     storyData: storyData,
     type: mode === "story" ? "Story" : ("Chapter" as "Story" | "Chapter"),
-    parentTokenId: mode === "chapter" ? parentTokenId : BigInt(0), // Only set parentTokenId for chapters
+    parentTokenId: String(parentTokenId), // This will be an empty string initially, then the correct ID
   };
-  const {loading, activeStep } = useLoaderStore();
+
+  const { loading, activeStep } = useLoaderStore();
+
   return (
     <Container>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-row justify-between">
           <Link href={`/`}>
             <Button variant="outline" size="sm">
@@ -54,14 +80,12 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
               Back
             </Button>
           </Link>
-          {/* The button is now independent and doesn't need props */}
           <IpNftMintButton rawStoryData={rawStoryData} />
         </div>
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl font-bold m-0!">
           Create New {mode === "story" ? "Story" : "Chapter"}
         </h1>
         <div>
-          {/* UploadComp updates the store directly */}
           <UploadComp />
         </div>
         <form className="max-w-4xl flex flex-col gap-4">
@@ -77,7 +101,6 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
             placeholder="Description"
             required
           />
-          {/* RichTextEditor also updates the store directly */}
           <RichTextEditor onChange={setStoryData} content={storyData} />
         </form>
       </div>

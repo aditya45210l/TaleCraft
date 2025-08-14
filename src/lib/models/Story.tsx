@@ -1,7 +1,7 @@
 // lib/models/Story.js
-import mongoose from 'mongoose';
+import {Schema,models,model} from 'mongoose';
 
-const StorySchema = new mongoose.Schema({
+const StorySchema = new Schema({
   tokenId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -15,4 +15,4 @@ const StorySchema = new mongoose.Schema({
 //   txHash: { type: String }
 });
 
-export default mongoose.models.Story || mongoose.model('Story', StorySchema);
+export default models.Story || model('Story', StorySchema);

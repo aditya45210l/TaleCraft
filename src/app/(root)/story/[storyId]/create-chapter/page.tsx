@@ -1,13 +1,13 @@
 'use client'
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams} from "next/navigation";
+import Editor from "../../../../../../components/rich-text-editor/Editor";
 
 const Page = ({}) => {
 const {storyId} = useParams(); // { storyId: "123" }
-const searchParams = useSearchParams();
-// const storyId = searchParams.get('story'); // "456"
-const chapter = searchParams.get('chapter'); // "456"
+console.log("story id from createChapter: ",storyId);
+
   return (
-    <div>page</div>
+    <Editor mode="chapter"/>
   )
 }
 export default Page

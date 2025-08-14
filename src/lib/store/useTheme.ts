@@ -7,7 +7,7 @@ interface BearState {
 }
 
 const useTheme = create<BearState>()((set) => ({
-  theme: "light",
+  theme: "dark",
   setTheme: () =>
     set((state) => ({ theme: state.theme === "dark" ? "light" : "dark" })),
 }));

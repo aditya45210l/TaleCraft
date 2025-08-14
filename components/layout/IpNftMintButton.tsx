@@ -1,3 +1,4 @@
+"use client";
 import { useAuth } from "@campnetwork/origin/react";
 import type { Address } from "viem/accounts";
 import { jwtDecode } from "jwt-decode";
@@ -13,13 +14,16 @@ export interface StoryData_Interfase {
   imageFile: File | null;
   storyData: string;
   type: "Story" | "Chapter";
-  parentTokenId?: bigint | undefined;
+  parentTokenId: string | undefined;
 }
 
-export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryData_Interfase }) {
+export default function IpNftMintButton({
+  rawStoryData,
+}: {
+  rawStoryData: StoryData_Interfase;
+}) {
   const { origin, isAuthenticated, connect, walletAddress } = useAuth();
   const { startLoading, advanceStep, stopLoading } = useLoaderStore();
-
   const checkAndReauthenticate = async () => {
     // 1. Get the current JWT token
     const jwtToken = await origin?.getJwt();
@@ -55,8 +59,10 @@ export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryD
       advanceStep();
       const contentIPFSUrl = await HtmlUpload(storyData.storyData);
       advanceStep();
-      const  imageIPFSUrl = await uploadToIPFS(storyData.imageFile!);
+      const imageIPFSUrl = await uploadToIPFS(storyData.imageFile!);
       advanceStep();
+
+       const storyId = `story_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       const metadata = {
         name: storyData.name,
@@ -64,13 +70,13 @@ export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryD
         image: imageIPFSUrl,
         html_content: contentIPFSUrl,
         type: storyData.type,
+        
         attributes: [
           { trait_type: "Protocol", value: "COLABRATIVE_STORY_PROTOCOL" },
           { trait_type: "ContentType", value: storyData.type },
-          {
-            trait_type: "ParentTokenId",
-            value: storyData.parentTokenId?.toString() || "0",
-          },
+          { trait_type: "StoryId", value: storyId },
+          { trait_type: "ParentStoryId", value: storyData.type === 'Story' ? storyId: storyData.parentTokenId },
+          
         ],
       };
       return metadata;
@@ -90,11 +96,13 @@ export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryD
 
       // After re-authentication, check if the state is truly authenticated.
       if (!isAuthenticated || !origin || !walletAddress) {
-        console.error("Authentication failed or user cancelled signing. Cannot proceed.");
+        console.error(
+          "Authentication failed or user cancelled signing. Cannot proceed."
+        );
         stopLoading();
         return;
       }
-      
+
       const metadata = await getStoryProtocolMetadata(storyData);
       if (!metadata) {
         console.log("Metadata is null, stopping minting process.");
@@ -111,15 +119,16 @@ export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryD
 
       console.log("Minting story content with metadata:", metadata);
       advanceStep();
-      
+
       // Use origin?.mintFile to ensure it only runs if origin is available
+      console.log(storyData.parentTokenId);
       const result = await origin?.mintFile(
         storyData.imageFile!,
         metadata,
         license,
-        storyData.parentTokenId
+        BigInt(0)
       );
-      
+
       advanceStep();
 
       if (!result) {
@@ -127,13 +136,12 @@ export default function IpNftMintButton({ rawStoryData }: { rawStoryData: StoryD
         stopLoading();
         return;
       }
-      
+
       await saveToDatabase(metadata, result, walletAddress as string);
-      
+
       advanceStep();
       console.log("Minting completed successfully:", result);
       stopLoading();
-
     } catch (error) {
       console.error("Error on minting:", error);
       stopLoading();

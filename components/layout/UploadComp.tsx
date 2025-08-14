@@ -4,10 +4,10 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
-import { useStoryStore } from "@/lib/store/useStoryData";
+import { useEditorDataStore } from "@/lib/store/useEditonData";
 import { useState } from "react";
 const UploadComp = () => {
-  const { setImageFile } = useStoryStore();
+  const { setImageFile } = useEditorDataStore();
   const [files, setFiles] = useState<File[] | undefined>();
   const [filePreview, setFilePreview] = useState<string | undefined>();
   const handleDrop = (files: File[]) => {
