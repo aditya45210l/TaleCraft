@@ -1,9 +1,11 @@
 // lib/api/stories.js
 
+import { NEXT_PUBLIC_BASE_URL } from "../config/env";
+
 // Get all stories
 export const fetchAllStories = async (page = 0, limit = 20) => {
   try {
-    const response = await fetch(`/api/stories?type=Story&limit=${limit}&skip=${page * limit}`);
+    const response = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/stories?type=Story&limit=${limit}&skip=${page * limit}`);
     const data = await response.json();
     return data.success ? data : { data: [], total: 0, hasMore: false };
   } catch (error) {
@@ -28,7 +30,7 @@ export const fetchAllStories = async (page = 0, limit = 20) => {
 export const fetchStoryWithChapters = async (storyId: string) => {
   try {
     // Corrected: Use a full URL with the base URL.
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/stories/${storyId}`, {
       cache: 'no-store'
     });
@@ -44,8 +46,8 @@ export const fetchStoryWithChapters = async (storyId: string) => {
 export const fetchStoriesByAuthor = async (authorAddress:string, type = null) => {
   try {
     const url = type 
-      ? `/api/stories/author/${authorAddress}?type=${type}`
-      : `/api/stories/author/${authorAddress}`;
+      ? `${NEXT_PUBLIC_BASE_URL}/api/stories/author/${authorAddress}?type=${type}`
+      : `${NEXT_PUBLIC_BASE_URL}/api/stories/author/${authorAddress}`;
     
     const response = await fetch(url);
     const data = await response.json();
@@ -59,7 +61,7 @@ export const fetchStoriesByAuthor = async (authorAddress:string, type = null) =>
 // Search stories
 export const searchStories = async (searchTerm:string, limit = 20) => {
   try {
-    const response = await fetch(`/api/stories/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}`);
+    const response = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/stories/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}`);
     const data = await response.json();
     return data.success ? data.data : [];
   } catch (error) {
@@ -71,7 +73,7 @@ export const searchStories = async (searchTerm:string, limit = 20) => {
 // Get chapter count for a story
 export const getChapterCount = async (parentStoryId:string) => {
   try {
-    const response = await fetch(`/api/stories/chapters/count?parentStoryId=${parentStoryId}`);
+    const response = await fetch(`${NEXT_PUBLIC_BASE_URL}/api/stories/chapters/count?parentStoryId=${parentStoryId}`);
     const data = await response.json();
     return data.success ? data.count : 0;
   } catch (error) {
