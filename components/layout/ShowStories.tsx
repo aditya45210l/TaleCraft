@@ -78,15 +78,14 @@ const ShowStories = () => {
     <Stories>
       <StoriesContent>
         {stories?.map((story, i) => (
-          <Link prefetch={false} href={`/story/${story.storyId}`} key={story.createdAt}>
+          <Link prefetch={false} href={`/story/${story.storyId}`} key={story.createdAt} >
             <motion.span
               key={story.createdAt}
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: i * 0.05, ease: "easeOut" }}
-              className="mr-3"
             >
-              <div key={story.createdAt}>
+              <div key={story.createdAt} className="mr-12">
                 <Story className="aspect-[3/4] w-[200px]">
                   <StoryVideo src={getRandomSvg()} />
                   <StoryOverlay />
@@ -100,7 +99,7 @@ const ShowStories = () => {
                         ].avatar
                       }
                     />
-                    <StoryAuthorName>{story.author}</StoryAuthorName>
+                    <StoryAuthorName>{story.author.slice(0,6) + '...'+ story.author.slice(-6)}</StoryAuthorName>
                   </StoryAuthor>
                 </Story>
               </div>

@@ -38,7 +38,7 @@ export default function NavBar() {
             Dashboard
           </Link>
           <Link
-            href="#"
+            href="/my-stories"
             className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
             prefetch={false}
           >

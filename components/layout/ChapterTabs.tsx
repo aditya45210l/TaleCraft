@@ -144,7 +144,9 @@ export function TabsDemo({
             </CardHeader>
             <CardContent className="grid gap-6">
               {isLoading ? (
-                <LoadingSpinner />
+                <div className="w-full items-center">
+                  <LoadingSpinner />
+                </div>
               ) : (
                 <div dangerouslySetInnerHTML={{ __html: activeTabContent }} />
               )}

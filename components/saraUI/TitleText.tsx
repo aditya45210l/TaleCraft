@@ -19,12 +19,4 @@ const TitleText = ({ text }: { text?: string }) => {
     );
 };
 
-// const TitleText = () => {
-//     return (
-//         <div className="flex flex-col items-center justify-center font-sans p-4">
-//             <SlideInText text="Simplicity is the ultimate sophistication." />
-//         </div>
-//     );
-// };
-
 export default TitleText;

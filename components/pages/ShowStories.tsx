@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { TabsDemo } from "../layout/ChapterTabs";
 
 // src/app/(root)/story/[storyId]/page.tsx
@@ -61,12 +62,13 @@ const DisplayStoryComp = ({
   return (
     <div className="flex flex-col py-4 px-6 gap-4">
       <div className="relative w-full h-40 md:h-62 rounded-2xl ">
-        <img
-          src={storyData.story.imageUrl || getRandomSvg()}
+        <Image
+        height={24} width={24}
+          src={ getRandomSvg()}
           alt="Banner background"
           className="w-full h-full object-cover rounded-2xl"
         />
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl">
+        <div className="absolute inset-0 text-center bg-black/40 flex items-center justify-center rounded-2xl">
           <h1 className="text-white text-4xl! md:text-5xl font-bold">
             {storyData.story.name}
           </h1>
@@ -86,7 +88,7 @@ const DisplayStoryComp = ({
 
           <TabsDemo storyId={storyId} data={storyData} />
         </section>
-        <section>{/* Your other sections... */}</section>
+
       </div>
     </div>
   );

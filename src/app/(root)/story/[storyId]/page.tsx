@@ -1,27 +1,4 @@
 
-// import DisplayStoryComp from "../../../../../components/pages/ShowStories";
-
-
-// interface StoryPageProps {
-//   params: Promise<{ storyId: string }>; // notice Promise type here
-//   searchParams: Promise<{ [key: string]: string | undefined }>;
-// }
-
-// export default async function Page({params}: StoryPageProps) {
-//   const resolvedParams = await params;
-
-//   const storyId = resolvedParams.storyId;
-
-//   return (
-//     <div>
-//         <DisplayStoryComp tokenId={storyId}/>
-//     </div>
-//   );
-// }
-
-
-// src/app/(root)/story/[storyId]/page.tsx
-
 import { fetchStoryWithChapters } from '@/lib/clientSideFetch/clientSideFetch';
 import { notFound } from 'next/navigation';
 import DisplayStoryComp from '../../../../../components/pages/ShowStories';
