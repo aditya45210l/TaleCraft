@@ -7,7 +7,8 @@ import { HtmlUpload } from "@/lib/actions/htmlUpload";
 import { Button } from "@/components/ui/button";
 import { useLoaderStore } from "@/lib/store/useLoaderStore";
 import { saveToDatabase } from "@/lib/actions/SaveToDataBase";
-import { redirect } from "next/navigation";
+import { Router, useRouter } from "next/router";
+import { useEditorDataStore } from "@/lib/store/useEditonData";
 
 export interface StoryData_Interfase {
   name: string;
@@ -25,6 +26,8 @@ export default function IpNftMintButton({
 }) {
   const { origin, isAuthenticated, connect, walletAddress } = useAuth();
   const { startLoading, advanceStep, stopLoading } = useLoaderStore();
+  const { resetState } = useEditorDataStore();
+  const router = useRouter();
   const checkAndReauthenticate = async () => {
     // 1. Get the current JWT token
     const jwtToken = await origin?.getJwt();
@@ -158,15 +161,16 @@ export default function IpNftMintButton({
       // @ts-expect-error this
       await saveToDatabase(metadata, result, walletAddress as string); // This will suppress the error.
       advanceStep();
-      redirect(`/story/${metadata.attributes[2].value}`)
-      console.log("Minting completed successfully:", result);
+      console.log("i am redirection the story")
       stopLoading();
+      router.push(`/story/${metadata.attributes[2].value}`);
     } catch (error) {
       console.error("Error on minting:", error);
       stopLoading();
+    } finally {
+      resetState();
     }
   };
-
   return (
     <div>
            {" "}

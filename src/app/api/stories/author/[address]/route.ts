@@ -11,7 +11,7 @@ interface Params {
 export async function GET(request: NextRequest, { params }: { params: Params }) {
   await dbConnect();
 
-  const { address } = params;
+  const { address } = await params;
   const { searchParams } = new URL(request.url);
   const type = searchParams.get('type');
   const limit = parseInt(searchParams.get('limit') || '50');

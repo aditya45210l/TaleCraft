@@ -63,8 +63,9 @@ const DisplayStoryComp = ({
     <div className="flex flex-col py-4 px-6 gap-4">
       <div className="relative w-full h-40 md:h-62 rounded-2xl ">
         <Image
-        height={24} width={24}
-          src={ getRandomSvg()}
+          height={24}
+          width={24}
+          src={getRandomSvg()}
           alt="Banner background"
           className="w-full h-full object-cover rounded-2xl"
         />
@@ -88,7 +89,6 @@ const DisplayStoryComp = ({
 
           <TabsDemo storyId={storyId} data={storyData} />
         </section>
-
       </div>
     </div>
   );

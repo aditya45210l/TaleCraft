@@ -17,9 +17,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { StoryDataType } from "@/app/(root)/story/[storyId]/page";
+
 import { fetchContentFromIpfs } from "@/lib/actions/FetchHtml";
-import { LoadingSpinner } from "@/components/ui/multi-step-loader";
+import { LoadingPage } from "./LoadingComp";
+import { StoryDataType } from "../pages/ShowStories";
 
 interface ChapterType {
   name: string;
@@ -33,6 +34,7 @@ interface ChapterType {
 interface FullStoryType {
   tokenId: string;
   name: string;
+  storyId:string;
   description: string;
   htmlContentUrl: string;
 }
@@ -56,6 +58,8 @@ export function TabsDemo({
       name: data.story.name,
       description: data.story.description,
       htmlContentUrl: data.story.htmlContentUrl,
+      storyId:data.story.storyId,
+
     };
     return [storyAsChapter, ...(data.chapters || [])];
   }, [data]);
@@ -105,7 +109,7 @@ export function TabsDemo({
     return <div>Story not found.</div>;
   }
 
-  const currentTabItem = fullContent.find((item) => item.tokenId === activeTab);
+  const currentTabItem = fullContent.find((item ) => item.tokenId === activeTab);
 
   return (
     <div className="flex min-w-full max-w-sm flex-col gap-6">
@@ -144,9 +148,8 @@ export function TabsDemo({
             </CardHeader>
             <CardContent className="grid gap-6">
               {isLoading ? (
-                <div className="w-full items-center">
-                  <LoadingSpinner />
-                </div>
+
+                  <LoadingPage/>
               ) : (
                 <div dangerouslySetInnerHTML={{ __html: activeTabContent }} />
               )}

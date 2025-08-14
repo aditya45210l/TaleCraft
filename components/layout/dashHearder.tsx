@@ -28,7 +28,7 @@ export function CarouselDemo() {
   "/svgs/banner12.svg",
   "/svgs/banner13.svg",
 ];
-  function getRandomSvg() {
+ function getRandomSvg() {
     const randomIndex = Math.floor(Math.random() * imagesArray.length);
     return svgPaths[randomIndex];
   }

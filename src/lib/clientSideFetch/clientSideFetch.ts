@@ -43,14 +43,16 @@ export const fetchStoryWithChapters = async (storyId: string) => {
 };
 
 // Get stories by author
-export const fetchStoriesByAuthor = async (authorAddress:string, type = null) => {
+export const fetchStoriesByAuthor = async (authorAddress:string, type = 'Story') => {
   try {
+    console.log("i am in fetchStoriesby adderss: function");
     const url = type 
       ? `${NEXT_PUBLIC_BASE_URL}/api/stories/author/${authorAddress}?type=${type}`
       : `${NEXT_PUBLIC_BASE_URL}/api/stories/author/${authorAddress}`;
     
     const response = await fetch(url);
     const data = await response.json();
+    console.log("auth stories : ",data)
     return data.success ? data.data : [];
   } catch (error) {
     console.error('Error fetching author stories:', error);

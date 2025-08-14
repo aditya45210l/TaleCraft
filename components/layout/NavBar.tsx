@@ -22,14 +22,19 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background container mx-auto">
       <div className="min-w-full flex h-16  items-center justify-between">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
+        <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <span>
-            <Image src="/Logo.png" alt="logo" className="size-6"  width={24} height={24}/>
-            
+            <Image
+              src="/Logo.png"
+              alt="logo"
+              className="size-6"
+              width={24}
+              height={24}
+            />
           </span>
-          <span className="text-primary size-6">TaleCraft</span>
+          <span className="text-primary size-6 font-bold leading-relaxed tracking-wide">TaleCraft</span>
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+        <nav className="hidden items-center gap-6  font-medium md:flex">
           <Link
             href="/"
             className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
@@ -44,54 +49,38 @@ export default function NavBar() {
           >
             My Stories
           </Link>
-          <Link
+          {/* <Link
             href="#"
             className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
             prefetch={false}
           >
             Earning
-          </Link>
+          </Link> */}
           <Link
-            href="#"
+            href="/create-story"
             className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
             prefetch={false}
           >
-            Help
+            Create
           </Link>
         </nav>
         <div className="flex items-center gap-4">
           <WriteStoryButton />
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <SearchIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[300px] p-4">
-              <div className="relative">
-                <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search..."
-                  className="pl-8 w-full"
-                />
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-
-          <span className="text-gray-500 dark:text-gray-400">
+          <span className="text-gray-500 dark:text-gray-400 w-[121.2px] hidden md:flex h-10">
             <CampModal injectButton={false} />
-            <CustomCampConnectButton />
+            <span className="w-[121.2px] h-10">
+              <CustomCampConnectButton />
+            </span>
           </span>
-          <Toggle
-            onClick={() => setTheme()}
-            aria-label="Toggle dark mode"
-            className="rounded-full"
-          >
-            <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          </Toggle>
-
+              <span className="hidden md:flex">
+                <Toggle
+                  onClick={() => setTheme()}
+                  aria-label="Toggle dark mode"
+                  className="rounded-full"
+                >
+                  <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                </Toggle>
+              </span>
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -104,22 +93,29 @@ export default function NavBar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="md:hidden">
-              <div className="grid gap-4 p-4">
+<div className="flex flex-col justify-between py-4 min-h-full">
+                <div className="grid gap-4 px-4">
+                <span className="text-gray-500 dark:text-gray-400 w-[121.2px]">
+                  <CampModal injectButton={false} />
+                  <span className="w-[121.2px] h-10">
+                    <CustomCampConnectButton />
+                  </span>
+                </span>
                 <Link
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+                  href="/"
+                  className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
                   prefetch={false}
                 >
-                  Home
+                  Dashboard
                 </Link>
                 <Link
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+                  href="/my-stories"
+                  className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
                   prefetch={false}
                 >
-                  About
+                  My Stories
                 </Link>
-                <Link
+                {/* <Link
                   href="#"
                   className="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
                   prefetch={false}
@@ -132,8 +128,18 @@ export default function NavBar() {
                   prefetch={false}
                 >
                   Contact
-                </Link>
+                </Link> */}
               </div>
+              <span className="flex px-4">
+                <Toggle
+                  onClick={() => setTheme()}
+                  aria-label="Toggle dark mode"
+                  className="rounded-full"
+                >
+                  <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                </Toggle>
+              </span>
+</div>
             </SheetContent>
           </Sheet>
         </div>
@@ -142,7 +148,7 @@ export default function NavBar() {
   );
 }
 
-function MenuIcon({className}:{className?: string}) {
+function MenuIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -163,7 +169,7 @@ function MenuIcon({className}:{className?: string}) {
   );
 }
 
-function MoonIcon({className}:{className?: string}) {
+function MoonIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}

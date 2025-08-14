@@ -1,8 +1,9 @@
-import StoriesBox from "../../../../components/pages/MyStories"
+
+import { MyStoryComp } from "../../../../components/pages/MyStrories"
 
 const page = () => {
   return (
-    <StoriesBox/>
+   <MyStoryComp/>
   )
 }
 export default page

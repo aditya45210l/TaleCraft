@@ -1,3 +1,4 @@
+'use client'
 import { fetchAllStories } from "@/lib/FetchActions/FetchAllStroy";
 import { useQuery } from "@tanstack/react-query";
 

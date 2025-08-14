@@ -1,12 +1,12 @@
+import { fetchStoryWithChapters } from "@/lib/clientSideFetch/clientSideFetch";
+import { notFound } from "next/navigation";
+import DisplayStoryComp from "../../../../../components/pages/ShowStories";
 
-import { fetchStoryWithChapters } from '@/lib/clientSideFetch/clientSideFetch';
-import { notFound } from 'next/navigation';
-import DisplayStoryComp from '../../../../../components/pages/ShowStories';
 
 export interface ChapterType {
   name: string;
-  description:string;
-  author:string,
+  description: string;
+  author: string;
   tokenId: string;
   storyId: string;
   chapterNumber: number;
@@ -16,9 +16,9 @@ export interface ChapterType {
 export interface StoryDataType {
   story: {
     storyId: string;
-    tokenId:string;
+    tokenId: string;
     name: string;
-    htmlContentUrl:string;
+    htmlContentUrl: string;
     description: string;
     imageUrl: string;
     author: string;
@@ -39,7 +39,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
   // The fetch function now needs the full URL to work correctly on the server.
   const storyData = await fetchStoryWithChapters(storyId);
-  console.log("from main page: ",storyData)
+  console.log("from main page: ", storyData);
 
   if (!storyData || !storyData.data || !storyData.data.story) {
     notFound();

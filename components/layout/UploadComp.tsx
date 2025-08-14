@@ -5,6 +5,7 @@ import {
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
 import { useEditorDataStore } from "@/lib/store/useEditonData";
+import Image from "next/image";
 import { useState } from "react";
 const UploadComp = () => {
   const { setImageFile } = useEditorDataStore();
@@ -37,7 +38,8 @@ const UploadComp = () => {
       <DropzoneContent>
         {filePreview && (
           <div className="h-[102px] w-full">
-            <img
+            <Image
+            height={24} width={24}
               alt="Preview"
               className="absolute top-0 left-0 h-full w-full object-cover"
               src={filePreview}

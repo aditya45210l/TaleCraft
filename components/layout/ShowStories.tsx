@@ -11,7 +11,6 @@ import {
   StoryOverlay,
   StoryVideo,
 } from "@/components/ui/kibo-ui/stories";
-import { StoryDataType } from "@/app/(root)/story/[storyId]/page";
 import { useRootStories } from "@/hooks/useFetchStories";
 import Link from "next/link";
 
