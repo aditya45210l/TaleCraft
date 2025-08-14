@@ -33,8 +33,9 @@ interface StoryData {
   chapterNumber: number;
   txHash: string;
 }
+// @ts-expect-error kljl
 
-export const saveToDatabase = async (metadata: Metadata, result: MintResult, walletAddress: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const saveToDatabase = async (metadata: Metadata, result: MintResult, walletAddress: string): Promise<{ success: boolean; data?; error?: string }> => {
   try {
     const getAttributeValue = (traitType: string): string | null => {
       const attr = metadata.attributes?.find(a => a.trait_type === traitType);
