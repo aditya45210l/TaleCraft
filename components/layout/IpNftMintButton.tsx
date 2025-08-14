@@ -7,6 +7,7 @@ import { HtmlUpload } from "@/lib/actions/htmlUpload";
 import { Button } from "@/components/ui/button";
 import { useLoaderStore } from "@/lib/store/useLoaderStore";
 import { saveToDatabase } from "@/lib/actions/SaveToDataBase";
+import { redirect } from "next/navigation";
 
 export interface StoryData_Interfase {
   name: string;
@@ -14,7 +15,7 @@ export interface StoryData_Interfase {
   imageFile: File | null;
   storyData: string;
   type: "Story" | "Chapter";
-  parentTokenId: string | undefined;
+  parentTokenId?: string | undefined;
 }
 
 export default function IpNftMintButton({
@@ -70,8 +71,6 @@ export default function IpNftMintButton({
           .substr(2, 9)}`;
         parentStoryId = storyId; // Parent is self
       } else {
-        // For a chapter, the storyId is the parent's ID
-        // parentTokenId is used as the storyId
         storyId = storyData.parentTokenId;
         parentStoryId = storyData.parentTokenId;
       }
@@ -103,7 +102,7 @@ export default function IpNftMintButton({
 
       await checkAndReauthenticate(); // After re-authentication, check if the state is truly authenticated.
       const data = await connect();
-      advanceStep()
+      advanceStep();
       console.log(data);
       if (!isAuthenticated || !origin || !walletAddress) {
         console.error(
@@ -127,14 +126,25 @@ export default function IpNftMintButton({
         paymentToken: "0x0000000000000000000000000000000000000000" as Address,
       };
 
+      const handleProgress = (percent: number) => {
+        console.log(`Upload is ${percent}% complete`);
+      };
+
+      // ... inside your async function
+      const options = {
+        progressCallback: handleProgress,
+      };
+
       console.log("Minting story content with metadata:", metadata);
 
       console.log(storyData.parentTokenId);
+      console.log("checking before minting: ", metadata);
       const result = await origin?.mintFile(
         storyData.imageFile!,
         metadata,
         license,
-        BigInt(0)
+        BigInt(0),
+        options
       );
       advanceStep(); // Use origin?.mintFile to ensure it only runs if origin is available
 
@@ -145,10 +155,10 @@ export default function IpNftMintButton({
         stopLoading();
         return;
       }
-// @ts-expect-error this
-      await saveToDatabase(metadata , result, walletAddress as string); // This will suppress the error.
-
+      // @ts-expect-error this
+      await saveToDatabase(metadata, result, walletAddress as string); // This will suppress the error.
       advanceStep();
+      redirect(`/story/${metadata.attributes[2].value}`)
       console.log("Minting completed successfully:", result);
       stopLoading();
     } catch (error) {
@@ -163,7 +173,8 @@ export default function IpNftMintButton({
       <Button
         onClick={() => mintStoryContent(rawStoryData)}
         disabled={
-          walletAddress && origin &&
+          walletAddress &&
+          origin &&
           rawStoryData.name &&
           rawStoryData.description &&
           rawStoryData.imageFile &&

@@ -6,4 +6,5 @@ export const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 export const NEXT_PUBLIC_PINATA_JWT = process.env.NEXT_PUBLIC_PINATA_JWT;
 export const NEXT_PUBLIC_PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
 export const DB_URL = process.env.DB_URL;
+export const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 

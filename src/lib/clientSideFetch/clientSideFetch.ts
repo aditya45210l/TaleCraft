@@ -28,7 +28,7 @@ export const fetchAllStories = async (page = 0, limit = 20) => {
 export const fetchStoryWithChapters = async (storyId: string) => {
   try {
     // Corrected: Use a full URL with the base URL.
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tale-craft-rust.vercel.app/';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/stories/${storyId}`, {
       cache: 'no-store'
     });

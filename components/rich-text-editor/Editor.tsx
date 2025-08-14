@@ -5,7 +5,7 @@ import Container from "../layout/Container";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import IpNftMintButton from "../layout/IpNftMintButton";
+import IpNftMintButton, { StoryData_Interfase } from "../layout/IpNftMintButton";
 import UploadComp from "../layout/UploadComp";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from ".";
@@ -59,14 +59,15 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
   };
 
   // Use the state variable parentTokenId in rawStoryData
-  const rawStoryData = {
+  const rawStoryData:StoryData_Interfase = {
     name: title,
     description: description,
     imageFile: imageFile,
     storyData: storyData,
-    type: mode === "story" ? "Story" : ("Chapter" as "Story" | "Chapter"),
-    parentTokenId: String(parentTokenId), // This will be an empty string initially, then the correct ID
+    type: mode === "story" ? "Story" : "Chapter" ,
+    parentTokenId: parentTokenId
   };
+
   const { origin, isAuthenticated, walletAddress } = useAuth();
   const { loading, activeStep } = useLoaderStore();
 

@@ -1,4 +1,6 @@
 
+import { NEXT_PUBLIC_BASE_URL } from "../config/env";
+
 interface Story {
   tokenId: string;
   name: string;
@@ -19,7 +21,7 @@ export const fetchAllStories = async (): Promise<Story[]> => {
     console.log("Fetching stories from API...");
     // Use the single API route with a query parameter to filter for 'Story' types
     const response = await fetch(
-      "https://tale-craft-rust.vercel.app/api/stories?type=Story",
+      `${NEXT_PUBLIC_BASE_URL}api/stories?type=Story`,
       {
         method: "GET",
         headers: {
@@ -50,7 +52,7 @@ export const fetchStoryById = async (storyId: string) => {
   try {
     // The storyId parameter should now be used in the URL
     const response = await fetch(
-      `https://tale-craft-rust.vercel.app/api/stories?storyId=${storyId}`
+      `${NEXT_PUBLIC_BASE_URL}api/stories?storyId=${storyId}`
     );
 
     if (!response.ok) {

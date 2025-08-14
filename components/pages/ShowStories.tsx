@@ -83,8 +83,8 @@ const DisplayStoryComp = ({
         </div>
         <section>
           {/* Pass storyId and the chapters data to the TabsDemo component */}
-          {/*  @ts-expect-error this */}
-          <TabsDemo tokenId={storyId} data={storyData} />
+
+          <TabsDemo storyId={storyId} data={storyData} />
         </section>
         <section>{/* Your other sections... */}</section>
       </div>
