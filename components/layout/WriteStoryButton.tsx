@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { NotebookPen, ScrollText } from "lucide-react";
+import { NotebookPen } from "lucide-react";
 import Link from "next/link";
 
 const WriteStoryButton = () => {
@@ -12,8 +12,8 @@ const WriteStoryButton = () => {
     <Link href={"/create-story"}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button>
-            <NotebookPen />
+          <Button variant={'outline'}>
+            <NotebookPen strokeWidth={2} size={24} />
           </Button>
         </TooltipTrigger>
         <TooltipContent>

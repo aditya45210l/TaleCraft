@@ -46,12 +46,14 @@ export function MyStoryComp() {
   }));
 console.log(formattedStories)
   return (
-    <div className="px-4 mx-auto md:px-8 transition-all">
+    <div className="px-4 mx-auto md:px-8 transition-all flex-1">
       {/* Conditionally render the HoverEffect component only if there are stories */}
       {formattedStories.length > 0 ? (
         <HoverEffect items={formattedStories} />
       ) : (
-        <div className="p-4 text-center text-gray-500">No stories found.</div>
+        <div className='flex justify-center items-center w-full h-full py-11'>
+          <div className="p-4 text-center text-gray-500 min-h-full flex-1 my-auto">No stories found.</div>
+        </div>
       )}
     </div>
   );

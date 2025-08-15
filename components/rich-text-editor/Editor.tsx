@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { CustomCampConnectButton } from "../layout/CustomCampConnectButton";
 import { LoadingPage } from "../layout/LoadingComp";
+import { Textarea } from "@/components/ui/textarea";
 
 type EditorParams = {
   storyId?: string | string[];
@@ -79,7 +80,7 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
   const handlePreviousStep = () => {
     setStep(1);
   };
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
 
@@ -177,7 +178,7 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
                 placeholder="Title*"
                 required
               />
-              <Input
+              <Textarea
                 id="description"
                 onChange={handleDescriptionChange}
                 placeholder="Description*"

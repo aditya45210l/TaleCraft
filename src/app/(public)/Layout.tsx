@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 const Layout = ({ children }: { children: ReactNode }) => {
   const theme = useTheme((state) => state.theme);
   return (
-    <main className={`bg-background container mx-auto ${theme}`}>
+    <main className={`bg-background container mx-auto ${theme}  `}>
       {children}
     </main>
   );

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Provider } from "@/lib/config/Provider";
 import NavBar from "../../components/layout/NavBar";
 import useTheme from "@/lib/store/useTheme";
+import Footer from "../../components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,17 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
-
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${geistSans.variable} ${geistMono.variable} font-mono antialiased flex flex-col min-h-screen`}
       >
         <Provider>
           <NavBar />
           {children}
+          <section className="container mx-auto">
+            <Footer />
+          </section>
         </Provider>
       </body>
     </html>

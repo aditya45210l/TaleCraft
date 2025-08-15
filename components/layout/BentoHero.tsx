@@ -12,6 +12,7 @@ import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import Image from "next/image";
 import { useRootStories } from "@/hooks/useFetchStories";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 // 1. Create an array of icon components
 const icons = [
@@ -68,7 +69,7 @@ export function BentoGridDemo() {
         className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl object-cover cursor-pointer overflow-hidden"
       ></Image>
       <div className="absolute inset-0 text-center bg-black/10 flex items-center justify-center rounded-2xl">
-        <h1 className="text-white text-4xl! md:text-5xl font-bold truncate">
+        <h1 className="text-white wrap-normal md:text-3xl! font-bold px-4 line-clamp-2 overflow-hidden max-sm:text-2xl!">
           {name}
         </h1>
       </div>
@@ -76,13 +77,15 @@ export function BentoGridDemo() {
   );
 
   return (
-    <BentoGrid className="px-8 mx-auto">
+    <BentoGrid className="px-4 mx-auto">
       {data?.map((item, i) => {
         // Get a random icon component for each item
         const RandomIcon = getRandomIcon();
 
         return (
-          <BentoGridItem
+
+            <BentoGridItem
+            keys={i}
             key={i}
             title={item.name}
             description={item.description}
@@ -91,6 +94,7 @@ export function BentoGridDemo() {
             icon={<RandomIcon />}
             className={i === 3 || i === 6 ? "md:col-span-2" : ""}
           />
+
         );
       })}
     </BentoGrid>

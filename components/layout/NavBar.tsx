@@ -20,9 +20,13 @@ import Image from "next/image";
 export default function NavBar() {
   const setTheme = useTheme((state) => state.setTheme);
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background container mx-auto">
+    <header className="sticky bottom-0 z-50 w-full border-b bg-background container px-1 mx-auto">
       <div className="min-w-full flex h-16  items-center justify-between">
-        <Link href="/" className="flex items-center gap-2" prefetch={false}>
+        <Link
+          href="/"
+          className="flex items-center gap-2 w-fit"
+          prefetch={false}
+        >
           <span>
             <Image
               src="/Logo.png"
@@ -32,7 +36,9 @@ export default function NavBar() {
               height={24}
             />
           </span>
-          <span className="text-primary size-6 font-bold leading-relaxed tracking-wide">TaleCraft</span>
+          <span className="text-xl font-bold leading-relaxed tracking-wide">
+            TaleCraft
+          </span>
         </Link>
         <nav className="hidden items-center gap-6  font-medium md:flex">
           <Link
@@ -64,7 +70,7 @@ export default function NavBar() {
             Create
           </Link>
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-fit px-5">
           <WriteStoryButton />
           <span className="text-gray-500 dark:text-gray-400 w-[121.2px] hidden md:flex h-10">
             <CampModal injectButton={false} />
@@ -72,7 +78,7 @@ export default function NavBar() {
               <CustomCampConnectButton />
             </span>
           </span>
-              <span className="hidden md:flex">
+          {/* <span className="hidden md:flex">
                 <Toggle
                   onClick={() => setTheme()}
                   aria-label="Toggle dark mode"
@@ -80,7 +86,7 @@ export default function NavBar() {
                 >
                   <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 </Toggle>
-              </span>
+              </span> */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -93,29 +99,29 @@ export default function NavBar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="md:hidden">
-<div className="flex flex-col justify-between py-4 min-h-full">
+              <div className="flex flex-col justify-between py-4 min-h-full">
                 <div className="grid gap-4 px-4">
-                <span className="text-gray-500 dark:text-gray-400 w-[121.2px]">
-                  <CampModal injectButton={false} />
-                  <span className="w-[121.2px] h-10">
-                    <CustomCampConnectButton />
+                  <span className="text-gray-500 dark:text-gray-400 w-[121.2px]">
+                    <CampModal injectButton={false} />
+                    <span className="w-[121.2px] h-10">
+                      <CustomCampConnectButton />
+                    </span>
                   </span>
-                </span>
-                <Link
-                  href="/"
-                  className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-                  prefetch={false}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/my-stories"
-                  className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-                  prefetch={false}
-                >
-                  My Stories
-                </Link>
-                {/* <Link
+                  <Link
+                    href="/"
+                    className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+                    prefetch={false}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/my-stories"
+                    className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+                    prefetch={false}
+                  >
+                    My Stories
+                  </Link>
+                  {/* <Link
                   href="#"
                   className="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
                   prefetch={false}
@@ -129,17 +135,17 @@ export default function NavBar() {
                 >
                   Contact
                 </Link> */}
+                </div>
+                <span className="flex px-4">
+                  <Toggle
+                    onClick={() => setTheme()}
+                    aria-label="Toggle dark mode"
+                    className="rounded-full"
+                  >
+                    <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                  </Toggle>
+                </span>
               </div>
-              <span className="flex px-4">
-                <Toggle
-                  onClick={() => setTheme()}
-                  aria-label="Toggle dark mode"
-                  className="rounded-full"
-                >
-                  <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                </Toggle>
-              </span>
-</div>
             </SheetContent>
           </Sheet>
         </div>

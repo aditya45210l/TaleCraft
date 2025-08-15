@@ -134,7 +134,7 @@ export function TabsDemo({
               ))}
             </TooltipProvider>
           </TabsList>
-          <div className="items-end  ml-12">
+          <div className="items-end  mr-1">
             <Link href={`/story/${storyId}/create-chapter`}>
               <Button>Add Chapter</Button>
             </Link>

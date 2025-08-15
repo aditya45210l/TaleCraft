@@ -60,7 +60,7 @@ const DisplayStoryComp = ({
   }
 
   return (
-    <div className="flex flex-col py-4 px-6 gap-4">
+    <div className="flex flex-col py-4 px-3 md:px-6 gap-4">
       <div className="relative w-full h-40 md:h-62 rounded-2xl ">
         <Image
           height={24}
@@ -70,14 +70,14 @@ const DisplayStoryComp = ({
           className="w-full h-full object-cover rounded-2xl"
         />
         <div className="absolute inset-0 text-center bg-black/40 flex items-center justify-center rounded-2xl">
-          <h1 className="text-white text-4xl! md:text-5xl font-bold">
+          <h1 className="text-white text-3xl!  md:text-5xl font-bold">
             {storyData.story.name}
           </h1>
         </div>
       </div>
       <div className="flex flex-col gap-4 px-4">
         <div>
-          <p className="text-3xl! font-bold m-0! line-clamp-1">
+          <p className=" text-2xl! md:text-3xl! font-bold m-0! line-clamp-1">
             {storyData.story.name}
           </p>
           <p className=" line-clamp-3 text-muted-foreground !m-0 max-w-10/12">

@@ -24,7 +24,7 @@ ul, ol {
   @apply list-disc list-inside space-y-2 ;
 }
 
-.light{
+:root{
   --background: #fdf6fb;
   --foreground: #1b1b1b;
   --card: #f6eff4;
