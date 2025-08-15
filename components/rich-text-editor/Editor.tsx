@@ -94,12 +94,6 @@ export default function Editor({ mode }: { mode: "story" | "chapter" }) {
   };
 
   const { loading, activeStep } = useLoaderStore();
-
-  // 3. Conditionally render the loading state first
-  if (!isReady) {
-    return <LoadingPage />;
-  }
-
   // 4. Now, check for authentication
   if (!isAuthenticated) {
     return (

@@ -1,18 +1,25 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { HoverEffect } from "@/components/ui/card-hover-effect";
+import {  HoverEffect } from "@/components/ui/card-hover-effect";
 import { fetchStoriesByAuthor } from "@/lib/clientSideFetch/clientSideFetch";
 import { useAuth } from "@campnetwork/origin/react";
 import { LoadingPage } from '../layout/LoadingComp';
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { CustomCampConnectButton } from '../layout/CustomCampConnectButton';
 export function MyStoryComp() {
-  const { walletAddress } = useAuth();
+  const { isAuthenticated,walletAddress } = useAuth();
   const [stories, setStories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Only fetch data if walletAddress is available
-    if (walletAddress) {
+    if (walletAddress && isAuthenticated) {
       const getStories = async () => {
         try {
           setIsLoading(true);
@@ -31,10 +38,32 @@ export function MyStoryComp() {
       };
       getStories();
     }
-  }, [walletAddress]); // The effect will re-run whenever walletAddress changes
+  }, [walletAddress,isAuthenticated]); // The effect will re-run whenever walletAddress changes
 
   if (isLoading) {
     return <LoadingPage/>
+  }
+
+    if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Authentication Required</CardTitle>
+            <CardDescription>
+              To create a new story or chapter, you must first connect your
+              wallet.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            <p className="mb-4 text-sm text-gray-500">
+              Please click the button below to log in.
+            </p>
+            <CustomCampConnectButton />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   // Format the stories only after they have been fetched
