@@ -263,10 +263,10 @@ This project is licensed under the **MIT License**. See the [LICENSE](https://ww
 ## 📞 Support & Community
 
   - **Discord**: [Join our community](https://www.google.com/search?q=https://discord.gg/talecraft)
-  - **Twitter**: [@TaleCraft](https://twitter.com/talecraft)
-  - **GitHub Issues**: [Report bugs or request features](https://www.google.com/search?q=https://github.com/your-username/talecraft/issues)
-  - **Email**: support@talecraft.com
+  - **Twitter**: [@TaleCraft](https://x.com/Aditya45210l)
+  - **GitHub**: [Report bugs or request features](https://github.com/aditya45210l)
+  - **Email**: aditya45210l@gmail.com
 
 -----
 
-*Built with ❤️ by the TaleCraft community*
+*Built with ❤️ by Aditya*
