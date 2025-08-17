@@ -7,7 +7,7 @@ import { HtmlUpload } from "@/lib/actions/htmlUpload";
 import { Button } from "@/components/ui/button";
 import { useLoaderStore } from "@/lib/store/useLoaderStore";
 import { saveToDatabase } from "@/lib/actions/SaveToDataBase";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEditorDataStore } from "@/lib/store/useEditonData";
 
 export interface StoryData_Interfase {
@@ -161,7 +161,7 @@ export default function IpNftMintButton({
       // @ts-expect-error this
       await saveToDatabase(metadata, result, walletAddress as string); // This will suppress the error.
       advanceStep();
-      console.log("i am redirection the story")
+      console.log("i am redirection the story");
       stopLoading();
       router.push(`/story/${metadata.attributes[2].value}`);
     } catch (error) {
@@ -173,7 +173,6 @@ export default function IpNftMintButton({
   };
   return (
     <div>
-           {" "}
       <Button
         onClick={() => mintStoryContent(rawStoryData)}
         disabled={
@@ -188,7 +187,7 @@ export default function IpNftMintButton({
             : true
         }
       >
-                Publish      {" "}
+        Publish
       </Button>
          {" "}
     </div>
